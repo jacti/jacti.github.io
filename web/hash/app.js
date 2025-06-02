@@ -1,5 +1,5 @@
 class HashTable {
-    constructor(size = 11, method = 'chaining') {
+    constructor(size = 7, method = 'chaining') {
         this.size = size;
         this.method = method;
         this.table = new Array(size);

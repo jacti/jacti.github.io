@@ -515,6 +515,7 @@ select.form-control {
 }
 
 .status--info {
+  margin: var(--space-16) 0 var(--space-4);
   background-color: rgba(
     var(--color-info-rgb, 98, 108, 113),
     var(--status-bg-opacity)
@@ -705,6 +706,7 @@ select.form-control {
   cursor: pointer;
   font-size: var(--font-size-sm);
   transition: all var(--duration-fast) var(--ease-standard);
+  color: var(--color-text);
 }
 
 .sample-key:hover {
@@ -800,7 +802,7 @@ select.form-control {
   padding: 2px 6px;
   border-radius: var(--radius-sm);
   font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
+  color: var(--color-text);
   border: 1px solid var(--color-border);
 }
 
