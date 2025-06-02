@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>해시 충돌 시각화</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>해시 충돌 해결 방법 시각화</h1>
+            <p>다양한 해시 충돌 해결 방법들을 직접 테스트하고 비교해보세요</p>
+        </header>
+
+        <div class="main-content">
+            <!-- 컨트롤 패널 -->
+            <div class="control-panel">
+                <div class="card">
+                    <div class="card__header">
+                        <h3>설정</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="form-group">
+                            <label class="form-label" for="table-size">테이블 크기</label>
+                            <select id="table-size" class="form-control">
+                                <option value="7">7</option>
+                                <option value="11" selected>11</option>
+                                <option value="13">13</option>
+                                <option value="17">17</option>
+                                <option value="19">19</option>
+                                <option value="23">23</option>
+                                <option value="29">29</option>
+                                <option value="31">31</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="collision-method">충돌 해결 방법</label>
+                            <select id="collision-method" class="form-control">
+                                <option value="chaining" selected>체이닝</option>
+                                <option value="linear_probing">선형 탐사</option>
+                                <option value="quadratic_probing">이중 탐사</option>
+                                <option value="double_hashing">이중 해싱법</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="key-input">키 입력</label>
+                            <input type="number" id="key-input" class="form-control" placeholder="숫자를 입력하세요">
+                        </div>
+
+                        <div class="button-group">
+                            <button id="insert-btn" class="btn btn--primary btn--sm">삽입</button>
+                            <button id="search-btn" class="btn btn--secondary btn--sm">검색</button>
+                            <button id="delete-btn" class="btn btn--outline btn--sm">삭제</button>
+                        </div>
+
+                        <button id="reset-btn" class="btn btn--outline btn--full-width mt-8">테이블 초기화</button>
+
+                        <div class="quick-insert mt-8">
+                            <label class="form-label">빠른 삽입</label>
+                            <div class="sample-keys">
+                                <button class="sample-key" data-key="10">10</button>
+                                <button class="sample-key" data-key="22">22</button>
+                                <button class="sample-key" data-key="31">31</button>
+                                <button class="sample-key" data-key="4">4</button>
+                                <button class="sample-key" data-key="15">15</button>
+                                <button class="sample-key" data-key="28">28</button>
+                                <button class="sample-key" data-key="17">17</button>
+                                <button class="sample-key" data-key="88">88</button>
+                                <button class="sample-key" data-key="59">59</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 시각화 영역 -->
+            <div class="visualization-area">
+                <div class="card">
+                    <div class="card__header">
+                        <h3 id="method-title">체이닝 (Separate Chaining)</h3>
+                        <div class="status-info">
+                            <div class="status status--info">
+                                로드 팩터: <span id="load-factor">0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card__body">
+                        <div id="hash-table" class="hash-table"></div>
+                        <div id="operation-log" class="operation-log">
+                            <strong>연산 로그:</strong>
+                            <div id="log-content">테이블이 초기화되었습니다.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 정보 패널 -->
+            <div class="info-panel">
+                <div class="card">
+                    <div class="card__header">
+                        <h3>방법 설명</h3>
+                    </div>
+                    <div class="card__body">
+                        <div id="method-description">
+                            각 해시 버킷을 연결 리스트로 구현하여 충돌을 해결하는 방법입니다. 같은 해시 값을 가진 키들을 연결 리스트로 연결하여 저장합니다.
+                        </div>
+                        
+                        <div class="method-details mt-8">
+                            <h4>장점</h4>
+                            <ul id="method-advantages">
+                                <li>구현이 간단함</li>
+                                <li>로드 팩터가 1을 초과해도 동작</li>
+                                <li>삭제 연산이 용이</li>
+                            </ul>
+                            
+                            <h4>단점</h4>
+                            <ul id="method-disadvantages">
+                                <li>추가 메모리 필요</li>
+                                <li>캐시 성능 저하</li>
+                                <li>포인터 오버헤드</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-8">
+                    <div class="card__header">
+                        <h3>성능 통계</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-label">총 키 개수</div>
+                                <div class="stat-value" id="total-keys">0</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">평균 탐사 횟수</div>
+                                <div class="stat-value" id="avg-probes">0.0</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">최대 체인 길이</div>
+                                <div class="stat-value" id="max-chain">0</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">충돌 발생 횟수</div>
+                                <div class="stat-value" id="collision-count">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-8">
+                    <div class="card__header">
+                        <h3>범례</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="legend">
+                            <div class="legend-item">
+                                <div class="legend-color empty"></div>
+                                <span>비어있음</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color occupied"></div>
+                                <span>점유됨</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color deleted"></div>
+                                <span>삭제됨</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color probing"></div>
+                                <span>탐사 중</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
